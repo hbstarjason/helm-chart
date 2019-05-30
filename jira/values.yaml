@@ -34,3 +34,4 @@ postgresql:
 
   persistence:
     size: 5Gi
+    storageClass: standard
