@@ -28,7 +28,6 @@ persistence:
   ## Default: volume.alpha.kubernetes.io/storage-class: default
   ##
   # storageClass:
-  storageClass: wiki
   accessMode: ReadWriteOnce
   size: 8Gi
 
