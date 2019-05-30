@@ -20,7 +20,7 @@ persistence:
   enabled: true
   size: 20Gi
   accessMode: ReadWriteOnce
-  storageClass: wiki
+  storageClass: standard
 
 postgresql:
   imageTag: "9.4"
@@ -33,3 +33,4 @@ postgresql:
 
   persistence:
     size: 5Gi
+    storageClass: standard
