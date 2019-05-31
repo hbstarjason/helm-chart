@@ -1,0 +1,37 @@
+## Confluence
+#image: seibertmedia/atlassian-confluence:5.10.8
+image: cptactionhank/atlassian-confluence
+imagePullPolicy: IfNotPresent
+
+serviceType: LoadBalancer
+ingressDomain: wiki.example.com
+
+maxMemoryJVM: 1G
+
+resources:
+  requests:
+    memory: 1Gi
+    cpu: 500m
+  limits:
+    memory: 2Gi
+    cpu: 1
+
+persistence:
+  enabled: false
+  size: 20Gi
+  accessMode: ReadWriteOnce
+  storageClass: standard
+
+postgresql:
+  imageTag: "9.4"
+  cpu: 100m
+  memory: 256Mi
+
+  postgresUser: confluence
+  postgresPassword: confluence
+  postgresDatabase: confluence
+
+  persistence:
+    size: 5Gi
+    enabled: false
+    storageClass: standard
