@@ -3,7 +3,7 @@ expose:
   type: nodePort
   tls:
     # 是否开启 tls，注意：如果类型是 ingress 并且tls被禁用，则在pull/push镜像时，则必须包含端口。详细查看文档：https://github.com/goharbor/harbor/issues/5291。
-    enabled: Fasle
+    enabled: False
   nodePort:
     # NodePort 服务名称
     name: harbor
