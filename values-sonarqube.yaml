@@ -114,7 +114,7 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ##
   # storageClass: "-"
-  storageClass: standard
+  storageClass: nfs-client
   accessMode: ReadWriteOnce
   size: 10Gi
 
@@ -172,7 +172,7 @@ postgresql:
   persistence:
     # enabled: false
     enabled: true
-    storageClass: standard
+    storageClass: nfs-client
     accessMode: ReadWriteOnce
     size: 10Gi
     
