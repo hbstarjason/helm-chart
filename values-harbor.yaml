@@ -1,6 +1,6 @@
 expose:
   # 设置暴露服务的方式。将类型设置为 ingress、clusterIP或nodePort并补充对应部分的信息。
-  type: NodePort
+  type: nodePort
   tls:
     # 是否开启 tls，注意：如果类型是 ingress 并且tls被禁用，则在pull/push镜像时，则必须包含端口。详细查看文档：https://github.com/goharbor/harbor/issues/5291。
     enabled: Fasle
