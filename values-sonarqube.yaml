@@ -167,6 +167,9 @@ postgresql:
   # Specify the TCP port that PostgreSQL should use
   service:
     port: 5432
+  persistence:
+    enabled: false
+    
 
 ## Configuration values for the mysql dependency
 ## ref: https://github.com/kubernetes/charts/blob/master/stable/mysql/README.md
@@ -188,6 +191,8 @@ mysql:
   # Specify the TCP port that mySQL should use
   service:
     port: 3306
+  persistence:
+    enabled: false
 #
 # Additional labels to add to the pods:
 # podLabels:
