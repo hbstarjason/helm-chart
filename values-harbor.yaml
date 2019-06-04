@@ -1,0 +1,33 @@
+expose:
+  # 设置暴露服务的方式。将类型设置为 ingress、clusterIP或nodePort并补充对应部分的信息。
+  type: ingress
+  tls:
+    # 是否开启 tls，注意：如果类型是 ingress 并且tls被禁用，则在pull/push镜像时，则必须包含端口。详细查看文档：https://github.com/goharbor/harbor/issues/5291。
+    enabled: true
+  nodePort:
+    # NodePort 服务名称
+    name: harbor
+    ports:
+      http:
+        port: 80
+        nodePort: 30002
+      https: 
+        port: 443
+        nodePort: 30003
+      notary: 
+        port: 4443
+        nodePort: 30004
+persistence:
+  enabled: true
+  resourcePolicy: "keep"
+  persistentVolumeClaim:
+    registry:
+      storageClass: "harbor-data"
+    chartmuseum:
+      storageClass: "harbor-data"
+    jobservice:
+      storageClass: "harbor-data"
+    database:
+      storageClass: "harbor-data"
+    redis:
+      storageClass: "harbor-data"        
