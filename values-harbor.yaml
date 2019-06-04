@@ -1,0 +1,374 @@
+expose:
+  # 设置暴露服务的方式。将类型设置为 ingress、clusterIP或nodePort并补充对应部分的信息。
+  type: ingress
+  tls:
+    # 是否开启 tls，注意：如果类型是 ingress 并且tls被禁用，则在pull/push镜像时，则必须包含端口。详细查看文档：https://github.com/goharbor/harbor/issues/5291。
+    enabled: true
+    # 如果你想使用自己的 TLS 证书和私钥，请填写这个 secret 的名称，这个 secret 必须包含名为 tls.crt 和 tls.key 的证书和私钥文件，如果没有设置则会自动生成证书和私钥文件。
+    secretName: ""
+    # 默认 Notary 服务会使用上面相同的证书和私钥文件，如果你想用一个独立的则填充下面的字段，注意只有类型是 ingress 的时候才需要。
+    notarySecretName: ""
+    # common name 是用于生成证书的，当类型是 clusterIP 或者 nodePort 并且 secretName 为空的时候才需要
+    commonName: ""
+  ingress:
+    hosts:
+      core: core.harbor.domain
+      notary: notary.harbor.domain
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  clusterIP:
+    # ClusterIP 服务的名称
+    name: harbor
+    ports:
+      httpPort: 80
+      httpsPort: 443
+      # Notary 服务监听端口，只有当 notary.enabled 设置为 true 的时候有效
+      notaryPort: 4443
+  nodePort:
+    # NodePort 服务名称
+    name: harbor
+    ports:
+      http:
+        port: 80
+        nodePort: 30002
+      https: 
+        port: 443
+        nodePort: 30003
+      notary: 
+        port: 4443
+        nodePort: 30004
+
+# Harbor 核心服务外部访问 URL。主要用于：
+# 1) 补全 portal 页面上面显示的 docker/helm 命令
+# 2) 补全返回给 docker/notary 客户端的 token 服务 URL
+
+# 格式：protocol://domain[:port]。
+# 1) 如果 expose.type=ingress，"domain"的值就是 expose.ingress.hosts.core 的值 
+# 2) 如果 expose.type=clusterIP，"domain"的值就是 expose.clusterIP.name 的值
+# 3) 如果 expose.type=nodePort，"domain"的值就是 k8s 节点的 IP 地址
+
+# 如果在代理后面部署 Harbor，请将其设置为代理的 URL
+externalURL: https://core.harbor.domain
+
+# 默认情况下开启数据持久化，在k8s集群中需要动态的挂载卷默认需要一个StorageClass对象。
+# 如果你有已经存在可以使用的持久卷，需要在"storageClass"中指定你的 storageClass 或者设置 "existingClaim"。
+#
+# 对于存储 docker 镜像和 Helm charts 包，你也可以用 "azure"、"gcs"、"s3"、"swift" 或者 "oss"，直接在 "imageChartStorage" 区域设置即可
+persistence:
+  enabled: true
+  # 设置成"keep"避免在执行 helm 删除操作期间移除 PVC，留空则在 chart 被删除后删除 PVC
+  resourcePolicy: "keep"
+  persistentVolumeClaim:
+    registry:
+      # 使用一个存在的 PVC(必须在绑定前先手动创建)
+      existingClaim: ""
+      # 指定"storageClass"，或者使用默认的 StorageClass 对象，设置成"-"禁用动态分配挂载卷
+      storageClass: ""
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+    chartmuseum:
+      existingClaim: ""
+      storageClass: ""
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+    jobservice:
+      existingClaim: ""
+      storageClass: ""
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 1Gi
+    # 如果使用外部的数据库服务，下面的设置将会被忽略
+    database:
+      existingClaim: ""
+      storageClass: ""
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 1Gi
+    # 如果使用外部的 Redis 服务，下面的设置将会被忽略
+    redis:
+      existingClaim: ""
+      storageClass: ""
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 1Gi
+  # 定义使用什么存储后端来存储镜像和 charts 包，详细文档地址：https://github.com/docker/distribution/blob/master/docs/configuration.md#storage 
+  imageChartStorage:
+    # 正对镜像和chart存储是否禁用跳转，对于一些不支持的后端(例如对于使用minio的`s3`存储)，需要禁用它。为了禁止跳转，只需要设置`disableredirect=true`即可，详细文档地址：https://github.com/docker/distribution/blob/master/docs/configuration.md#redirect
+    disableredirect: false
+    # 指定存储类型："filesystem", "azure", "gcs", "s3", "swift", "oss"，在相应的区域填上对应的信息。
+    # 如果你想使用 pv 则必须设置成"filesystem"类型
+    type: filesystem
+    filesystem:
+      rootdirectory: /storage
+      #maxthreads: 100
+    azure:
+      accountname: accountname
+      accountkey: base64encodedaccountkey
+      container: containername
+      #realm: core.windows.net
+    gcs:
+      bucket: bucketname
+      # The base64 encoded json file which contains the key
+      encodedkey: base64-encoded-json-key-file
+      #rootdirectory: /gcs/object/name/prefix
+      #chunksize: "5242880"
+    s3:
+      region: us-west-1
+      bucket: bucketname
+      #accesskey: awsaccesskey
+      #secretkey: awssecretkey
+      #regionendpoint: http://myobjects.local
+      #encrypt: false
+      #keyid: mykeyid
+      #secure: true
+      #v4auth: true
+      #chunksize: "5242880"
+      #rootdirectory: /s3/object/name/prefix
+      #storageclass: STANDARD
+    swift:
+      authurl: https://storage.myprovider.com/v3/auth
+      username: username
+      password: password
+      container: containername
+      #region: fr
+      #tenant: tenantname
+      #tenantid: tenantid
+      #domain: domainname
+      #domainid: domainid
+      #trustid: trustid
+      #insecureskipverify: false
+      #chunksize: 5M
+      #prefix:
+      #secretkey: secretkey
+      #accesskey: accesskey
+      #authversion: 3
+      #endpointtype: public
+      #tempurlcontainerkey: false
+      #tempurlmethods:
+    oss:
+      accesskeyid: accesskeyid
+      accesskeysecret: accesskeysecret
+      region: regionname
+      bucket: bucketname
+      #endpoint: endpoint
+      #internal: false
+      #encrypt: false
+      #secure: true
+      #chunksize: 10M
+      #rootdirectory: rootdirectory
+
+imagePullPolicy: IfNotPresent
+
+logLevel: debug
+# Harbor admin 初始密码，Harbor 启动后通过 Portal 修改该密码
+harborAdminPassword: "Harbor12345"
+# 用于加密的一个 secret key，必须是一个16位的字符串
+secretKey: "not-a-secure-key"
+
+# 如果你通过"ingress"保留服务，则下面的Nginx不会被使用
+nginx:
+  image:
+    repository: goharbor/nginx-photon
+    tag: v1.7.0
+  replicas: 1
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ## 额外的 Deployment 的一些 annotations
+  podAnnotations: {}
+
+portal:
+  image:
+    repository: goharbor/harbor-portal
+    tag: v1.7.0
+  replicas: 1
+# resources:
+#  requests:
+#    memory: 256Mi
+#    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+core:
+  image:
+    repository: goharbor/harbor-core
+    tag: v1.7.0
+  replicas: 1
+# resources:
+#  requests:
+#    memory: 256Mi
+#    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+adminserver:
+  image:
+    repository: goharbor/harbor-adminserver
+    tag: v1.7.0
+  replicas: 1
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+jobservice:
+  image:
+    repository: goharbor/harbor-jobservice
+    tag: v1.7.0
+  replicas: 1
+  maxJobWorkers: 10
+  # jobs 的日志收集器："file", "database" or "stdout"
+  jobLogger: file
+# resources:
+#   requests:
+#     memory: 256Mi
+#     cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+registry:
+  registry:
+    image:
+      repository: goharbor/registry-photon
+      tag: v2.6.2-v1.7.0
+  controller:
+    image:
+      repository: goharbor/harbor-registryctl
+      tag: v1.7.0
+  replicas: 1
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+chartmuseum:
+  enabled: true
+  image:
+    repository: goharbor/chartmuseum-photon
+    tag: v0.7.1-v1.7.0
+  replicas: 1
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+clair:
+  enabled: true
+  image:
+    repository: goharbor/clair-photon
+    tag: v2.0.7-v1.7.0
+  replicas: 1
+  # 用于从 Internet 更新漏洞数据库的http(s)代理
+  httpProxy:
+  httpsProxy:
+  # clair 更新程序的间隔，单位为小时，设置为0来禁用
+  updatersInterval: 12
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+notary:
+  enabled: true
+  server:
+    image:
+      repository: goharbor/notary-server-photon
+      tag: v0.6.1-v1.7.0
+    replicas: 1
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+  signer:
+    image:
+      repository: goharbor/notary-signer-photon
+      tag: v0.6.1-v1.7.0
+    replicas: 1
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+
+database:
+  # 如果使用外部的数据库，则设置 type=external，然后填写 external 区域的一些连接信息
+  type: internal
+  internal:
+    image:
+      repository: goharbor/harbor-db
+      tag: v1.7.0
+    # 内部的数据库的初始化超级用户的密码
+    password: "changeit"
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+  external:
+    host: "192.168.0.1"
+    port: "5432"
+    username: "user"
+    password: "password"
+    coreDatabase: "registry"
+    clairDatabase: "clair"
+    notaryServerDatabase: "notary_server"
+    notarySignerDatabase: "notary_signer"
+    sslmode: "disable"
+  podAnnotations: {}
+
+redis:
+  # 如果使用外部的 Redis 服务，设置 type=external，然后补充 external 部分的连接信息。
+  type: internal
+  internal:
+    image:
+      repository: goharbor/redis-photon
+      tag: v1.7.0
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+  external:
+    host: "192.168.0.2"
+    port: "6379"
+    # coreDatabaseIndex 必须设置为0
+    coreDatabaseIndex: "0"
+    jobserviceDatabaseIndex: "1"
+    registryDatabaseIndex: "2"
+    chartmuseumDatabaseIndex: "3"
+    password: ""
+  podAnnotations: {}
