@@ -101,7 +101,8 @@ resources: {}
 #  cpu: 100m
 #  memory: 128Mi
 persistence:
-  enabled: false
+  #enabled: false
+  enabled: true
   ## Specify an existing volume claim instead of creating a new one.
   ## When using this option all following options like storageClass, accessMode and size are ignored.
   # existingClaim:
@@ -113,8 +114,9 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ##
   # storageClass: "-"
-  # accessMode: ReadWriteOnce
-  # size: 10Gi
+  storageClass: nfs-client
+  accessMode: ReadWriteOnce
+  size: 10Gi
 
 # List of plugins to install.
 # For example:
@@ -168,7 +170,11 @@ postgresql:
   service:
     port: 5432
   persistence:
-    enabled: false
+    # enabled: false
+    enabled: true
+    storageClass: nfs-client
+    accessMode: ReadWriteOnce
+    size: 10Gi
     
 
 ## Configuration values for the mysql dependency
