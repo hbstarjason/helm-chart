@@ -20,12 +20,14 @@ helm del --purge jira
 
 ```sh
 # install sonarqube
+# wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-sonarqube.yaml
 helm install --name sonarqube stable/sonarqube -f values-sonarqube.yaml --namespace sonarqube
 helm del --purge sonarqube
 ```
 
 ```sh
 # install gitlab
+# wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-gitlab.yaml
 helm install --name gitlab stable/gitlab -f values-gitlab.yaml --namespace gitlab
 helm del --purge gitlab
 ```
@@ -33,6 +35,7 @@ helm del --purge gitlab
 ```sh
 # install harbor
 # https://github.com/goharbor/harbor-helm
+# wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-harbor.yaml
 helm repo add harbor https://helm.goharbor.io
 helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbor
 ```
