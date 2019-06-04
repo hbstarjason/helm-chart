@@ -22,12 +22,12 @@ persistence:
   resourcePolicy: "keep"
   persistentVolumeClaim:
     registry:
-      storageClass: "harbor-data"
+      storageClass: "nfs-client"
     chartmuseum:
-      storageClass: "harbor-data"
+      storageClass: "nfs-client"
     jobservice:
-      storageClass: "harbor-data"
+      storageClass: "nfs-client"
     database:
-      storageClass: "harbor-data"
+      storageClass: "nfs-client"
     redis:
-      storageClass: "harbor-data"        
+      storageClass: "nfs-client"        
