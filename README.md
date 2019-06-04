@@ -32,6 +32,7 @@ helm del --purge gitlab
 
 ```sh
 # install harbor
+# https://github.com/goharbor/harbor-helm
 helm repo add harbor https://helm.goharbor.io
 helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbor
 ```
