@@ -36,6 +36,7 @@ helm del --purge gitlab
 # install harbor
 # https://github.com/goharbor/harbor-helm
 # wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-harbor.yaml
+sed -i 's/nfs-client/standard/g'  values-harbor.yaml
 helm repo add harbor https://helm.goharbor.io
 helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbor
 ```
