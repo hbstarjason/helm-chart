@@ -28,7 +28,7 @@ helm del --purge sonarqube
 ```sh
 # install gitlab
 # wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-gitlab.yaml
-helm install --name gitlab stable/gitlab -f values-gitlab.yaml --namespace gitlab
+helm install --name gitlab stable/gitlab-ce -f values-gitlab.yaml --namespace gitlab
 helm del --purge gitlab
 ```
 
