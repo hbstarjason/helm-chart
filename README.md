@@ -44,7 +44,8 @@ helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbo
 ```sh
 # install spinnaker
 # https://github.com/moondev/spinnaker-helm
-# 
 helm install --name spinnaker ./spinnaker --namespace spinnaker
 kubectl get pods --namespace spinnaker
+
+# kubectl get svc deck -n spinnaker -o yaml |sed 's/NodePort/LoadBalancer/' |kubectl replace -f -
 ```
