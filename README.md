@@ -40,3 +40,11 @@ sed -i 's/nfs-client/standard/g'  values-harbor.yaml
 helm repo add harbor https://helm.goharbor.io
 helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbor
 ```
+
+```sh
+# install spinnaker
+# https://github.com/moondev/spinnaker-helm
+# 
+helm install --name spinnaker ./spinnaker --namespace spinnaker
+kubectl get pods --namespace spinnaker
+```
