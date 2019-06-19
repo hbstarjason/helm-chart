@@ -48,4 +48,13 @@ helm install --name spinnaker ./spinnaker --namespace spinnaker
 kubectl get pods --namespace spinnaker
 
 # kubectl get svc deck -n spinnaker -o yaml |sed 's/NodePort/LoadBalancer/' |kubectl replace -f -
+
+
+# official chart 
+# https://hub.helm.sh/charts/stable/spinnaker
+# https://github.com/helm/charts/blob/master/stable/spinnaker/README.md
+
+# helm install -n spinnaker stable/spinnaker --namespace spinnaker --timeout 600
+
+# wget https://raw.githubusercontent.com/helm/charts/master/stable/spinnaker/values.yaml
 ```
