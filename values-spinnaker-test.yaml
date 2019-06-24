@@ -70,7 +70,8 @@ halyard:
     # limits:
     #   memory: "2Gi"
     #   cpu: "200m"
-
+  persistence:
+    enabled: false
   ## Uncomment if you want to set environment variables on the Halyard pod.
   # env:
   #   - name: DEFAULT_JVM_OPTS
