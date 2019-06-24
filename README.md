@@ -57,4 +57,6 @@ kubectl get pods --namespace spinnaker
 # helm install -n spinnaker stable/spinnaker --namespace spinnaker --timeout 600
 
 # wget https://raw.githubusercontent.com/helm/charts/master/stable/spinnaker/values.yaml
+# https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-spinnaker-test.yaml
+# helm install -n spinnaker stable/spinnaker -f values-spinnaker-test.yaml --debug
 ```
