@@ -70,6 +70,7 @@ halyard:
     # limits:
     #   memory: "2Gi"
     #   cpu: "200m"
+  ############## add 2019-6-24
   persistence:
     enabled: false
   ## Uncomment if you want to set environment variables on the Halyard pod.
