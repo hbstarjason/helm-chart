@@ -26,3 +26,19 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: standard
+
+
+cat << EOF > halyard-pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: halyard-home-spinnaker-spinnaker-halyard-0
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "standard"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+EOF
