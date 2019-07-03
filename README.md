@@ -42,6 +42,13 @@ helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbo
 ```
 
 ```sh
+# install influxdb
+# wget https://raw.githubusercontent.com/hbstarjason/helm-chart/master/values-influxdb-test.yaml
+helm install --name influxdb stable/influxdb -f values-influxdb-test.yaml --namespace influxdb
+```
+
+
+```sh
 # install spinnaker
 # https://github.com/moondev/spinnaker-helm
 helm install --name spinnaker ./spinnaker --namespace spinnaker
