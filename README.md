@@ -56,6 +56,11 @@ kubectl get pods --namespace spinnaker
 
 # kubectl get svc deck -n spinnaker -o yaml |sed 's/NodePort/LoadBalancer/' |kubectl replace -f -
 
+mkdir tmp && cd tmp && git init && \
+git remote add -f origin https://github.com/hbstarjason/helm-chart.git
+
+git config core.sparsecheckout true && echo "spinnaker" >> .git/info/sparse-checkout && \
+git pull origin master
 
 # official chart 
 # https://hub.helm.sh/charts/stable/spinnaker
