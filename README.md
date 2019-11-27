@@ -47,6 +47,8 @@ helm install --name harbor harbor/harbor -f values-harbor.yaml --namespace harbo
 helm install --name influxdb stable/influxdb -f values-influxdb-test.yaml --namespace influxdb
 
 # curl -sl -I http://influxdb.influxdb:8086/ping
+# curl -XPOST 'http://influxdb.influxdb:8086/query' --data-urlencode 'q=CREATE DATABASE "mydb"'
+
 ```
 
 
