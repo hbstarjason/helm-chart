@@ -122,7 +122,8 @@ email:
 # Don't change these unless you know what you're doing
 service:
   name: sentry
-  type: LoadBalancer
+  #type: LoadBalancer
+  type: NodePort
   externalPort: 9000
   internalPort: 9000
 
@@ -151,7 +152,8 @@ filestore:
     ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
     ##
     persistence:
-      enabled: true
+      #enabled: true
+      enabled: false
       ## database data Persistent Volume Storage Class
       ## If defined, storageClassName: <storageClass>
       ## If set to "-", storageClassName: "", which disables dynamic provisioning
